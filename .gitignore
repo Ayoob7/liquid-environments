@@ -4,3 +4,4 @@ rendercore/.git/
 rendercore/.gitignore
 START_SERVER.*
 .vscode/
+.idea
