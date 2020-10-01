@@ -1,6 +1,7 @@
 import * as RC from "../rendercore/src/RenderCore.js";
 
 class App {
+	// Constructor
 	constructor(canvas) {
 		window.app = this;
 		// Canvas
@@ -34,6 +35,7 @@ class App {
 		//window.requestAnimationFrame(() => { this.update(); });
 	}
 
+	// Start of Initialization modules
 	initSettings() {
 		// Params
 		const urlParams = new URLSearchParams(window.location.search);
@@ -998,7 +1000,11 @@ class App {
 
 		this.renderQueue.pushRenderPass(this.displayPass);
 	}
+	// End of Initialization modules
 
+	/* ================== Most of my work here ================== */
+
+	// Loading objects
 	loadResources(callback) {
 		this.manager = new RC.LoadingManager();
 		this.objLoader = new RC.ObjLoader(this.manager);
@@ -1030,6 +1036,7 @@ class App {
 		wait();
 	}
 
+	// Setting up different objects here
 	setupResources() {
 		let xorshift32_state = new Uint32Array([0.4 * 0xFFFFFFFF]);
 		function xorshift32() {
@@ -1097,6 +1104,9 @@ class App {
 		}
 	}
 
+	/* ================== Most of my work here ================== */
+
+	// In Main Constructor
 	start() {
 		// Add shadow maps to objects
 		this.sceneObjects = []
@@ -1137,6 +1147,7 @@ class App {
 		window.requestAnimationFrame(() => { this.update(); });
 	}
 
+	// In Start method
 	update() {
 		// Timer
 		this.timer.prev = this.timer.curr;
@@ -1210,6 +1221,7 @@ class App {
 		window.requestAnimationFrame(() => { this.update(); });
 	}
 
+	// In Update method
 	render() {
 		// For some reason I have to manually do this?????
 		this.camera.updateMatrixWorld();
@@ -1247,6 +1259,7 @@ class App {
 		}
 	}
 
+	// In Render method
 	resize() {
 		// Resize canvas
 		this.canvas.width  = window.innerWidth;
@@ -1287,6 +1300,7 @@ class App {
 		this.dof.focus.y = Math.trunc(this.canvas.height / 2.0);
 	}
 
+	// Loading message
 	setLoading(isLoading) {
 		if (isLoading !== this.isLoading) {
 			document.getElementById("loading").style.display = isLoading ? "block" : "none";
