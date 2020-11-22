@@ -1,6 +1,9 @@
 import * as RC from "../rendercore/src/RenderCore.js";
 
 class App {
+	// Global variables
+	three_d_model_count;
+
 	// Constructor
 	constructor(canvas) {
 		window.app = this;
@@ -1010,11 +1013,14 @@ class App {
 		this.objLoader = new RC.ObjLoader(this.manager);
 		this.imageLoader = new RC.ImageLoader(this.manager);
 
-		let urls = [
-			"data/models/dragon.obj",
-			"data/models/bunny.obj",
-			"data/models/structure_id_106.obj"
-		];
+		let urls = [];
+		// for(var x = 1; x <= 14; x++) {
+		// 	urls.push("data/models/mitos/mito_"+x+"_out.obj");
+		// }
+		for(var x = 1; x <= 15; x++) {
+			urls.push("data/models/mito_new/structure_id_"+x+".obj");
+		}
+		this.three_d_model_count = urls.length;
 		this.resources = [];
 
 		for (let i = 0; i < urls.length; ++i) {
@@ -1047,60 +1053,88 @@ class App {
 			return x[0] / 0xFFFFFFFF;
 		}
 
-		// Dragon
-		for (let obj of this.resources[0]) {
-			obj.scale.multiplyScalar(0.3);
-			obj.position = new RC.Vector3(0, 0, 0);
-			obj.material = this.createPhongMat();
-			obj.material.shininess = 16;
+		// // Dragon
+		// for (let obj of this.resources[0]) {
+		// 	obj.scale.multiplyScalar(0.3);
+		// 	obj.position = new RC.Vector3(0, 0, 0);
+		// 	obj.material = this.createPhongMat();
+		// 	obj.material.shininess = 16;
+		//
+		// 	obj.geometry.drawWireframe = false;
+		// 	this.scene.add(obj);
+		// }
+		//
+		// // Bunny
+		// let MMatArray = [];
+		// let instances = 0;
+		// for (let obj of this.resources[1]) {
+		// 	obj.position = new RC.Vector3(0, 0, 0);
+		// 	obj.material = this.createPhongMat();
+		// 	obj.material.shininess = 16;
+		// 	//this.scene.add(obj);
+		//
+		// 	// Clone bunnies
+		// 	let n = 8;
+		// 	let r = 3.5;
+		// 	let sc = 0.9;
+		//
+		// 	for (let a = 0; a < Math.PI * 2; a += Math.PI * 2 / n) {
+		// 		let z = Math.sin(a) * r * 0.7;
+		// 		let x = Math.cos(a) * r;
+		// 		let clone = new RC.Mesh(obj.geometry, this.createPhongMat());
+		// 			clone.position = new RC.Vector3(x, 0, z);
+		// 			clone.material.color = new RC.Color("#FFFFFF");
+		// 			clone.material.specular = new RC.Color("#FFFFFF");
+		// 			clone.material.shininess = 8;
+		// 			clone.scale.multiplyScalar(sc);
+		// 			clone.rotateY(-a + Math.PI);
+		// 		this.scene.add(clone);
+		// 	}
+		// }
 
-			obj.geometry.drawWireframe = false;
-			this.scene.add(obj);
-		}
+		// // Lucy
+		// for (let obj of this.resources[2]) {
+		// 	obj.scale.multiplyScalar(0.5);
+		// 	obj.position = new RC.Vector3(-3.8, 0, -4.5);
+		// 	//obj.material = this.createPhongMat();
+		// 	obj.material.shininess = 16;
+		//
+		// 	// let clone = new RC.Mesh(obj.geometry, this.createPhongMat());
+		// 	// clone.material.shininess = 16;
+		// 	// clone.scale.multiplyScalar(0.015);
+		// 	// clone.position = new RC.Vector3(+3.8, 0, -4.5);
+		// 	// clone.scale.x *= -1;
+		//
+		// 	this.scene.add(obj);
+		// 	// this.scene.add(clone);
+		// }
+		let xval = 1
+		let yval = 1
+		let zval = 1
 
-		// Bunny
-		let MMatArray = [];
-		let instances = 0;
-		for (let obj of this.resources[1]) {
-			obj.position = new RC.Vector3(0, 0, 0);
-			obj.material = this.createPhongMat();
-			obj.material.shininess = 16;
-			//this.scene.add(obj);
+		let steps = this.three_d_model_count
+		let radius = 3
+		let centerX = 0
+		let centerY = 0
 
-			// Clone bunnies
-			let n = 8;
-			let r = 3.5;
-			let sc = 0.9;
-			
-			for (let a = 0; a < Math.PI * 2; a += Math.PI * 2 / n) {
-				let z = Math.sin(a) * r * 0.7;
-				let x = Math.cos(a) * r;
-				let clone = new RC.Mesh(obj.geometry, this.createPhongMat());
-					clone.position = new RC.Vector3(x, 0, z);
-					clone.material.color = new RC.Color("#FFFFFF");
-					clone.material.specular = new RC.Color("#FFFFFF");
-					clone.material.shininess = 8;
-					clone.scale.multiplyScalar(sc);
-					clone.rotateY(-a + Math.PI);
-				this.scene.add(clone);
+		let newX = 0
+		let newY = 0
+		let newZ = 0
+
+		// Mitochondrias
+		for(var x = 0; x < steps; x++) {
+
+			newX = centerX + radius * Math.cos(2 * Math.PI * x / steps);
+			newZ = centerY + radius * Math.sin(2 * Math.PI * x / steps);
+			newY = Math.floor(Math.random() * 4) + 1
+			for (let obj of this.resources[x]) {
+				obj.scale.multiplyScalar(0.01);
+				obj.position = new RC.Vector3(newX, newY, newZ);
+				obj.material.shininess = 16;
+				this.scene.add(obj);
+
 			}
-		}
-
-		// Lucy
-		for (let obj of this.resources[2]) {
-			obj.scale.multiplyScalar(0.015);
-			obj.position = new RC.Vector3(-3.8, 0, -4.5);
-			//obj.material = this.createPhongMat();
-			obj.material.shininess = 16;
-
-			// let clone = new RC.Mesh(obj.geometry, this.createPhongMat());
-			// clone.material.shininess = 16;
-			// clone.scale.multiplyScalar(0.015);
-			// clone.position = new RC.Vector3(+3.8, 0, -4.5);
-			// clone.scale.x *= -1;
-
-			this.scene.add(obj);
-			// this.scene.add(clone);
+			xval += 1
 		}
 	}
 
