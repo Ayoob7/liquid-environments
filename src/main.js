@@ -1013,7 +1013,7 @@ class App {
 		let urls = [
 			"data/models/dragon.obj",
 			"data/models/bunny.obj",
-			"data/models/lucy.obj"
+			"data/models/structure_id_106.obj"
 		];
 		this.resources = [];
 
@@ -1090,7 +1090,7 @@ class App {
 		for (let obj of this.resources[2]) {
 			obj.scale.multiplyScalar(0.015);
 			obj.position = new RC.Vector3(-3.8, 0, -4.5);
-			obj.material = this.createPhongMat();
+			//obj.material = this.createPhongMat();
 			obj.material.shininess = 16;
 
 			// let clone = new RC.Mesh(obj.geometry, this.createPhongMat());
