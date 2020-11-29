@@ -371,6 +371,18 @@ class App {
 		return mat;
 	}
 
+	createTextureForStructures(color, specular, shininess) {
+		if (color === undefined) color = new RC.Color(255, 255, 255);
+		if (specular === undefined) specular = new RC.Color(1, 1, 1);
+		if (shininess === undefined) shininess = 1.0;
+
+		let mat = new RC.MeshPhongMaterial();
+		mat.color = color;
+		mat.specular = specular;
+		mat.shininess = shininess;
+		return mat;
+	}
+
 	initScene() {
 		/// Main scene
 		this.scene = new RC.Scene();
@@ -1020,6 +1032,20 @@ class App {
 		for(var x = 1; x <= 15; x++) {
 			urls.push("data/models/mito_new/structure_id_"+x+".obj");
 		}
+		var st = 'structure_id_405.obj,structure_id_334.obj,structure_id_336.obj,structure_id_333.obj,structure_id_535.obj,structure_id_395.obj,structure_id_502.obj,structure_id_375.obj,structure_id_390.obj,structure_id_660.obj,structure_id_703.obj,structure_id_623.obj,structure_id_359.obj,structure_id_608.obj,structure_id_618.obj,structure_id_595.obj,structure_id_552.obj'
+		for (var s of st.split(",")) {
+			urls.push("data/models/endolysosomes_new/"+s)
+		}
+		function shuffleArray(array) {
+			for (var i = array.length - 1; i > 0; i--) {
+				var j = Math.floor(Math.random() * (i + 1));
+				var temp = array[i];
+				array[i] = array[j];
+				array[j] = temp;
+			}
+		}
+		shuffleArray(urls);
+
 		this.three_d_model_count = urls.length;
 		this.resources = [];
 
@@ -1053,61 +1079,6 @@ class App {
 			return x[0] / 0xFFFFFFFF;
 		}
 
-		// // Dragon
-		// for (let obj of this.resources[0]) {
-		// 	obj.scale.multiplyScalar(0.3);
-		// 	obj.position = new RC.Vector3(0, 0, 0);
-		// 	obj.material = this.createPhongMat();
-		// 	obj.material.shininess = 16;
-		//
-		// 	obj.geometry.drawWireframe = false;
-		// 	this.scene.add(obj);
-		// }
-		//
-		// // Bunny
-		// let MMatArray = [];
-		// let instances = 0;
-		// for (let obj of this.resources[1]) {
-		// 	obj.position = new RC.Vector3(0, 0, 0);
-		// 	obj.material = this.createPhongMat();
-		// 	obj.material.shininess = 16;
-		// 	//this.scene.add(obj);
-		//
-		// 	// Clone bunnies
-		// 	let n = 8;
-		// 	let r = 3.5;
-		// 	let sc = 0.9;
-		//
-		// 	for (let a = 0; a < Math.PI * 2; a += Math.PI * 2 / n) {
-		// 		let z = Math.sin(a) * r * 0.7;
-		// 		let x = Math.cos(a) * r;
-		// 		let clone = new RC.Mesh(obj.geometry, this.createPhongMat());
-		// 			clone.position = new RC.Vector3(x, 0, z);
-		// 			clone.material.color = new RC.Color("#FFFFFF");
-		// 			clone.material.specular = new RC.Color("#FFFFFF");
-		// 			clone.material.shininess = 8;
-		// 			clone.scale.multiplyScalar(sc);
-		// 			clone.rotateY(-a + Math.PI);
-		// 		this.scene.add(clone);
-		// 	}
-		// }
-
-		// // Lucy
-		// for (let obj of this.resources[2]) {
-		// 	obj.scale.multiplyScalar(0.5);
-		// 	obj.position = new RC.Vector3(-3.8, 0, -4.5);
-		// 	//obj.material = this.createPhongMat();
-		// 	obj.material.shininess = 16;
-		//
-		// 	// let clone = new RC.Mesh(obj.geometry, this.createPhongMat());
-		// 	// clone.material.shininess = 16;
-		// 	// clone.scale.multiplyScalar(0.015);
-		// 	// clone.position = new RC.Vector3(+3.8, 0, -4.5);
-		// 	// clone.scale.x *= -1;
-		//
-		// 	this.scene.add(obj);
-		// 	// this.scene.add(clone);
-		// }
 		let xval = 1
 		let yval = 1
 		let zval = 1
@@ -1131,6 +1102,7 @@ class App {
 				obj.scale.multiplyScalar(0.01);
 				obj.position = new RC.Vector3(newX, newY, newZ);
 				obj.material.shininess = 16;
+				obj.material = this.createTextureForStructures();
 				this.scene.add(obj);
 
 			}
