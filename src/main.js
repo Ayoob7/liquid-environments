@@ -1094,16 +1094,16 @@ class App {
 		this.imageLoader = new RC.ImageLoader(this.manager);
 
 		let urls = [];
-		// for(var x = 1; x <= 14; x++) {
-		// 	urls.push("data/models/mitos/mito_"+x+"_out.obj");
-		// }
+		for(var x = 1; x <= 14; x++) {
+			urls.push("data/models/mitos/mito_"+x+"_out.obj");
+		}
 		// Mitochondrias
 		for(var x = 1; x <= 15; x++) {
 			urls.push("data/models/mito_new/structure_id_"+x+".obj");
 		}
 		// Endolysosomes
-		var st = 'structure_id_405.obj,structure_id_334.obj,structure_id_336.obj,structure_id_333.obj,structure_id_535.obj,structure_id_395.obj,structure_id_502.obj,structure_id_375.obj,structure_id_390.obj,structure_id_660.obj,structure_id_703.obj,structure_id_623.obj,structure_id_359.obj,structure_id_608.obj,structure_id_618.obj,structure_id_595.obj,structure_id_552.obj'
-		for (var s of st.split(",")) {
+		var end = 'structure_id_405.obj,structure_id_334.obj,structure_id_336.obj,structure_id_333.obj,structure_id_535.obj,structure_id_395.obj,structure_id_502.obj,structure_id_375.obj,structure_id_390.obj,structure_id_660.obj,structure_id_703.obj,structure_id_623.obj,structure_id_359.obj,structure_id_608.obj,structure_id_618.obj,structure_id_595.obj,structure_id_552.obj'
+		for (var s of end.split(",")) {
 			urls.push("data/models/endolysosomes_new/"+s)
 		}
 		// Fusiform Vesicles
@@ -1158,7 +1158,7 @@ class App {
 		let zval = 1
 
 		let steps = this.three_d_model_count
-		let radius = 3
+		let radius = 4
 		let centerX = 0
 		let centerY = 0
 
