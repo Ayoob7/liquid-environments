@@ -1,5 +1,8 @@
 import * as RC from "../rendercore/src/RenderCore.js";
 
+let keyboardRotation, keyboardTranslation;
+let prevTime = -1, currTime, dt;
+
 class App {
 	// Global variables
 	three_d_model_count;
@@ -16,8 +19,14 @@ class App {
 		this.renderer.addShaderLoaderUrls("src/shaders");
 		// GL
 		this.gl = this.renderer._gl;
+
+		// region Setup keyboard
+		keyboardRotation = {x: 0, y: 0, z: 0, reset: function() { this.x = 0; this.y = 0; this.z = 0; }};
+		keyboardTranslation = {x: 0, y: 0, z: 0, reset: function() { this.x = 0; this.y = 0; this.z = 0; }};
+
 		// Input
 		this.keyboardInput = RC.KeyboardInput.instance;
+		this.initInputControls();
 		this.mouseInput = RC.MouseInput.instance;
 		this.mouseInput.setSourceObject(this.canvas);
 
@@ -319,6 +328,61 @@ class App {
 		//this.lights.frustumGeo.drawWireframe = true;
 	}
 
+	initInputControls() {
+		this.keyboardInput.addListener(function (pressedKeys) {
+			// ROTATIONS
+			if (pressedKeys.has(65)) {  // A
+				keyboardRotation.y = 1;
+			}
+
+			if (pressedKeys.has(68)) {  // D
+				keyboardRotation.y = -1;
+			}
+
+			if (pressedKeys.has(87)) {  // W
+				keyboardRotation.x = 1;
+			}
+
+			if (pressedKeys.has(83)) {  // S
+				keyboardRotation.x = -1;
+			}
+
+			if (pressedKeys.has(81)) {  // Q
+				keyboardRotation.z = 1;
+			}
+
+			if (pressedKeys.has(82)) {  // R
+				keyboardRotation.z = -1;
+			}
+
+
+			// TRANSLATIONS
+			if (pressedKeys.has(39)) {  // RIGHT - Right
+				keyboardTranslation.x = 1;
+			}
+
+			if (pressedKeys.has(37)) {  // LEFT - Left
+				keyboardTranslation.x = -1;
+			}
+
+			if (pressedKeys.has(40)) {  // DOWN - Backward
+				keyboardTranslation.z = 1;
+			}
+
+			if (pressedKeys.has(38)) {  // UP - Forward
+				keyboardTranslation.z = -1;
+			}
+
+			if (pressedKeys.has(85)) {  // U - Upward
+				keyboardTranslation.y = 1;
+			}
+
+			if (pressedKeys.has(70)) {  // F - Downward
+				keyboardTranslation.y = -1;
+			}
+		});
+	}
+
 	addFrustumLight(position, target, color) {
 		if (position === undefined) position = new RC.Vector3(0, 0, 0);
 		if (target === undefined) target = new RC.Vector3(0, 0, -1).add(position);
@@ -392,13 +456,13 @@ class App {
 		this.camera.lookAt(new RC.Vector3(0, 0, 0), new RC.Vector3(0, 1, 0));
 		this.PMatInv = new RC.Matrix4().getInverse(this.camera.projectionMatrix);
 		
-		/*this.cameraManager = new RC.CameraManager();
-		this.cameraManager.addOrbitCamera(this.camera, new RC.Vector3(0, 1.0, 0));
-		this.cameraManager.activeCamera = this.camera;*/
 		this.cameraManager = new RC.CameraManager();
+		this.cameraManager.addFullOrbitCamera(this.camera, new RC.Vector3(0, 1.0, 0));
+		this.cameraManager.activeCamera = this.camera;
+		/*this.cameraManager = new RC.CameraManager();
 		this.cameraManager.addFullOrbitCamera(this.camera, new RC.Vector3(0, 0, 0));
 		//this.cameraManager.camerasControls[camera._uuid].keyMap = keyMap;
-		this.cameraManager.activeCamera = this.camera;
+		this.cameraManager.activeCamera = this.camera;*/
 
 
 		// Volumetric lights
@@ -1214,6 +1278,12 @@ class App {
 		if (Math.abs(diff) > 0.00001);
 			this.dof.v0 -= diff * Math.min(this.timer.delta * 2.0, 1.0);
 
+		currTime = new Date();
+		dt = (prevTime !== -1) ? currTime - prevTime : 0;
+		prevTime = currTime;
+
+		keyboardTranslation.reset();
+		keyboardRotation.reset();
 
 		// Camera
 		const input = {
@@ -1226,6 +1296,14 @@ class App {
 			gamepads: undefined,
 			multiplier: 1
 		};
+
+		this.camera.translateX(keyboardTranslation.x * dt * 0.001);
+		this.camera.translateY(keyboardTranslation.y * dt * 0.001);
+		this.camera.translateZ(keyboardTranslation.z * dt * 0.001);
+		this.camera.rotationX += keyboardRotation.x * dt * 0.0001;
+		this.camera.rotationY += keyboardRotation.y  * dt * 0.0001;
+		this.camera.rotationZ += keyboardRotation.z * dt * 0.0001;
+
 		this.cameraManager.update(input, this.timer.delta * 1000);
 
 		// Move light
