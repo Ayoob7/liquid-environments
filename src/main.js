@@ -351,7 +351,7 @@ class App {
 				keyboardRotation.z = 1;
 			}
 
-			if (pressedKeys.has(82)) {  // R
+			if (pressedKeys.has(69)) {  // E
 				keyboardRotation.z = -1;
 			}
 
@@ -1297,12 +1297,15 @@ class App {
 			multiplier: 1
 		};
 
-		this.camera.translateX(keyboardTranslation.x * dt * 0.001);
-		this.camera.translateY(keyboardTranslation.y * dt * 0.001);
-		this.camera.translateZ(keyboardTranslation.z * dt * 0.001);
-		this.camera.rotationX += keyboardRotation.x * dt * 0.0001;
-		this.camera.rotationY += keyboardRotation.y  * dt * 0.0001;
-		this.camera.rotationZ += keyboardRotation.z * dt * 0.0001;
+		const motion_scalar = 0.001
+		const motion_damping = 1
+
+		this.camera.translateX(keyboardTranslation.x * dt * motion_scalar * motion_damping);
+		this.camera.translateY(keyboardTranslation.y * dt * motion_scalar * motion_damping);
+		this.camera.translateZ(keyboardTranslation.z * dt * motion_scalar * motion_damping);
+		this.camera.rotationX += keyboardRotation.x * dt * motion_scalar * motion_damping;
+		this.camera.rotationY += keyboardRotation.y  * dt * motion_scalar * motion_damping;
+		this.camera.rotationZ += keyboardRotation.z * dt * motion_scalar * motion_damping;
 
 		this.cameraManager.update(input, this.timer.delta * 1000);
 
