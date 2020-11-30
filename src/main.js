@@ -392,8 +392,12 @@ class App {
 		this.camera.lookAt(new RC.Vector3(0, 0, 0), new RC.Vector3(0, 1, 0));
 		this.PMatInv = new RC.Matrix4().getInverse(this.camera.projectionMatrix);
 		
-		this.cameraManager = new RC.CameraManager();
+		/*this.cameraManager = new RC.CameraManager();
 		this.cameraManager.addOrbitCamera(this.camera, new RC.Vector3(0, 1.0, 0));
+		this.cameraManager.activeCamera = this.camera;*/
+		this.cameraManager = new RC.CameraManager();
+		this.cameraManager.addFullOrbitCamera(this.camera, new RC.Vector3(0, 0, 0));
+		//this.cameraManager.camerasControls[camera._uuid].keyMap = keyMap;
 		this.cameraManager.activeCamera = this.camera;
 
 
