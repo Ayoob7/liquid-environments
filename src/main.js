@@ -1029,12 +1029,19 @@ class App {
 		// for(var x = 1; x <= 14; x++) {
 		// 	urls.push("data/models/mitos/mito_"+x+"_out.obj");
 		// }
+		// Mitochondrias
 		for(var x = 1; x <= 15; x++) {
 			urls.push("data/models/mito_new/structure_id_"+x+".obj");
 		}
+		// Endolysosomes
 		var st = 'structure_id_405.obj,structure_id_334.obj,structure_id_336.obj,structure_id_333.obj,structure_id_535.obj,structure_id_395.obj,structure_id_502.obj,structure_id_375.obj,structure_id_390.obj,structure_id_660.obj,structure_id_703.obj,structure_id_623.obj,structure_id_359.obj,structure_id_608.obj,structure_id_618.obj,structure_id_595.obj,structure_id_552.obj'
 		for (var s of st.split(",")) {
 			urls.push("data/models/endolysosomes_new/"+s)
+		}
+		// Fusiform Vesicles
+		var fv = 'structure_id_816.obj,structure_id_815.obj,structure_id_818.obj,structure_id_822.obj,structure_id_820.obj,structure_id_821.obj'
+		for (var s of fv.split(",")) {
+			urls.push("data/models/fusiform_vesicles_new/"+s)
 		}
 		function shuffleArray(array) {
 			for (var i = array.length - 1; i > 0; i--) {
@@ -1044,8 +1051,7 @@ class App {
 				array[j] = temp;
 			}
 		}
-		shuffleArray(urls);
-
+		shuffleArray(urls)
 		this.three_d_model_count = urls.length;
 		this.resources = [];
 
