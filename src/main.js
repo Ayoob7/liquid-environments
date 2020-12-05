@@ -1,7 +1,7 @@
 import * as RC from "../rendercore/src/RenderCore.js";
 
 let keyboardRotation, keyboardTranslation;
-let prevTime = -1, currTime, dt;
+let prevTime = -1, currTime, delta_time;
 
 class App {
 	// Global variables
@@ -20,7 +20,7 @@ class App {
 		// GL
 		this.gl = this.renderer._gl;
 
-		// region Setup keyboard
+		// Keyboard Input setup
 		keyboardRotation = {x: 0, y: 0, z: 0, reset: function() { this.x = 0; this.y = 0; this.z = 0; }};
 		keyboardTranslation = {x: 0, y: 0, z: 0, reset: function() { this.x = 0; this.y = 0; this.z = 0; }};
 
@@ -474,7 +474,7 @@ class App {
 		//this.addFrustumLight(new RC.Vector3(10, 10, 10),  new RC.Vector3(0, 0, 0), new RC.Color(1, 1, 1)).intensity = 0;
 		this.a = this.addFrustumLight(new RC.Vector3(-4, 6, -10), new RC.Vector3(0, 0, 0), new RC.Color(1, 1, 1)); //.volumeIntensity = 0;
 		this.b = this.addFrustumLight(new RC.Vector3(10, 10, 10),  new RC.Vector3(0, 0, 0), new RC.Color(1, 1, 1)); //.volumeIntensity = 0;
-		this.c = this.addFrustumLight(new RC.Vector3(6, 4, 0),  new RC.Vector3(0, 0, 0), new RC.Color(1, 0.3, 0.7)); //.volumeIntensity = 0;
+		this.c = this.addFrustumLight(new RC.Vector3(6, 4, 0),  new RC.Vector3(0, 0, 0), new RC.Color(1, 1, 1)); //.volumeIntensity = 0;
 
 		// RenderCore Lights
 		// this.dLight = new RC.DirectionalLight(new RC.Color("#FFFFFF"), 1.0);
@@ -1275,7 +1275,7 @@ class App {
 			this.dof.v0 -= diff * Math.min(this.timer.delta * 2.0, 1.0);
 
 		currTime = new Date();
-		dt = (prevTime !== -1) ? currTime - prevTime : 0;
+		delta_time = (prevTime !== -1) ? currTime - prevTime : 0;
 		prevTime = currTime;
 
 		keyboardTranslation.reset();
@@ -1294,14 +1294,15 @@ class App {
 		};
 
 		const motion_scalar = 0.001
-		const motion_damping = 1
+		const translation_motion_damping = 1
+		const rotation_motion_damping = 1
 
-		this.camera.translateX(keyboardTranslation.x * dt * motion_scalar * motion_damping);
-		this.camera.translateY(keyboardTranslation.y * dt * motion_scalar * motion_damping);
-		this.camera.translateZ(keyboardTranslation.z * dt * motion_scalar * motion_damping);
-		this.camera.rotationX += keyboardRotation.x * dt * motion_scalar * motion_damping;
-		this.camera.rotationY += keyboardRotation.y  * dt * motion_scalar * motion_damping;
-		this.camera.rotationZ += keyboardRotation.z * dt * motion_scalar * motion_damping;
+		this.camera.translateX(keyboardTranslation.x * delta_time * motion_scalar * translation_motion_damping);
+		this.camera.translateY(keyboardTranslation.y * delta_time * motion_scalar * translation_motion_damping);
+		this.camera.translateZ(keyboardTranslation.z * delta_time * motion_scalar * translation_motion_damping);
+		this.camera.rotationX += keyboardRotation.x * delta_time * motion_scalar * rotation_motion_damping;
+		this.camera.rotationY += keyboardRotation.y  * delta_time * motion_scalar * rotation_motion_damping;
+		this.camera.rotationZ += keyboardRotation.z * delta_time * motion_scalar * rotation_motion_damping;
 
 		this.cameraManager.update(input, this.timer.delta * 1000);
 
