@@ -1153,9 +1153,6 @@ class App {
 			return x[0] / 0xFFFFFFFF;
 		}
 
-		let xval = 1
-		let yval = 1
-		let zval = 1
 
 		let steps = this.three_d_model_count
 		let radius = 4
@@ -1166,7 +1163,7 @@ class App {
 		let newY = 0
 		let newZ = 0
 
-		// Mitochondrias
+		// Structures
 		for(var x = 0; x < steps; x++) {
 
 			newX = centerX + radius * Math.cos(2 * Math.PI * x / steps);
@@ -1180,7 +1177,6 @@ class App {
 				this.scene.add(obj);
 
 			}
-			xval += 1
 		}
 	}
 
