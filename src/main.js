@@ -6,6 +6,7 @@ let prevTime = -1, currTime, delta_time;
 class App {
 	// Global variables
 	three_d_model_count;
+	augmented_three_d_model_count;
 
 	// Constructor
 	constructor(canvas) {
@@ -373,11 +374,11 @@ class App {
 				keyboardTranslation.z = -1;
 			}
 
-			if (pressedKeys.has(85)) {  // U - Upward
+			if (pressedKeys.has(73)) {  // I - Upward
 				keyboardTranslation.y = 1;
 			}
 
-			if (pressedKeys.has(70)) {  // F - Downward
+			if (pressedKeys.has(74)) {  // J - Downward
 				keyboardTranslation.y = -1;
 			}
 		});
@@ -1094,9 +1095,9 @@ class App {
 		this.imageLoader = new RC.ImageLoader(this.manager);
 
 		let urls = [];
-		for(var x = 1; x <= 14; x++) {
+		/*for(var x = 1; x <= 14; x++) {
 			urls.push("data/models/mitos/mito_"+x+"_out.obj");
-		}
+		}*/
 		// Mitochondrias
 		for(var x = 1; x <= 15; x++) {
 			urls.push("data/models/mito_new/structure_id_"+x+".obj");
@@ -1111,6 +1112,12 @@ class App {
 		for (var s of fv.split(",")) {
 			urls.push("data/models/fusiform_vesicles_new/"+s)
 		}
+
+		const makeRepeated = (arr, repeats) =>
+			[].concat(...Array.from({ length: repeats }, () => arr));
+
+		let augmented_dataset = makeRepeated(urls, 3)
+
 		function shuffleArray(array) {
 			for (var i = array.length - 1; i > 0; i--) {
 				var j = Math.floor(Math.random() * (i + 1));
@@ -1120,12 +1127,23 @@ class App {
 			}
 		}
 		shuffleArray(urls)
+		shuffleArray(augmented_dataset)
+
+		this.augmented_three_d_model_count = augmented_dataset.length;
 		this.three_d_model_count = urls.length;
 		this.resources = [];
 
-		for (let i = 0; i < urls.length; ++i) {
+		/*for (let i = 0; i < urls.length; ++i) {
 			this.resources[i] = false;
 			this.objLoader.load(urls[i], (obj) => {
+				this.resources[i] = obj;
+
+			});
+		}*/
+
+		for (let i = 0; i < augmented_dataset.length; ++i) {
+			this.resources[i] = false;
+			this.objLoader.load(augmented_dataset[i], (obj) => {
 				this.resources[i] = obj;
 
 			});
@@ -1133,7 +1151,7 @@ class App {
 
 		let wait = (function() {
 			if (this.resources.every((el) => { return el !== false; })) {
-				this.setupResources();
+				this.setupSquare();
 				callback();
 			} else {
 				setTimeout(wait, 500);
@@ -1159,19 +1177,49 @@ class App {
 		let centerX = 0
 		let centerY = 0
 
-		let newX = 0
-		let newY = 0
-		let newZ = 0
+		let x_val = 0
+		let y_val = 0
+		let z_val = 0
 
 		// Structures
 		for(var x = 0; x < steps; x++) {
 
-			newX = centerX + radius * Math.cos(2 * Math.PI * x / steps);
-			newZ = centerY + radius * Math.sin(2 * Math.PI * x / steps);
-			newY = Math.floor(Math.random() * 4) + 1
+			x_val = centerX + radius * Math.cos(2 * Math.PI * x / steps);
+			z_val = centerY + radius * Math.sin(2 * Math.PI * x / steps);
+			y_val = Math.floor(Math.random() * 4) + 1
 			for (let obj of this.resources[x]) {
 				obj.scale.multiplyScalar(0.01);
-				obj.position = new RC.Vector3(newX, newY, newZ);
+				obj.position = new RC.Vector3(x_val, y_val, z_val);
+				obj.material.shininess = 16;
+				obj.material = this.createTextureForStructures();
+				this.scene.add(obj);
+
+			}
+		}
+	}
+
+	setupSquare() {
+		let steps = this.augmented_three_d_model_count
+		let radius = 4
+		let centerX = 0
+		let centerY = 0
+
+		let x_val = 0
+		let y_val = 0
+		let z_val = 0
+
+		// Structures
+		for(var x = 0; x < steps; x++) {
+
+			x_val = centerX + radius * Math.cos(2 * Math.PI * x / steps);
+			z_val = centerY + radius * Math.sin(2 * Math.PI * x / steps);
+			y_val = Math.floor(Math.random() * 4) + 1
+			for (let obj of this.resources[x]) {
+				obj.scale.multiplyScalar(0.01);
+				obj.rotateX(Math.floor(Math.random() * 90) + 1 )
+				obj.rotateY(Math.floor(Math.random() * 90) + 1 )
+				obj.rotateZ(Math.floor(Math.random() * 90) + 1 )
+				obj.position = new RC.Vector3(x_val, y_val, z_val);
 				obj.material.shininess = 16;
 				obj.material = this.createTextureForStructures();
 				this.scene.add(obj);
