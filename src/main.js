@@ -1151,7 +1151,7 @@ class App {
 
 		let wait = (function() {
 			if (this.resources.every((el) => { return el !== false; })) {
-				this.setupSquare();
+				this.setupCollisionDetection();
 				callback();
 			} else {
 				setTimeout(wait, 500);
@@ -1198,7 +1198,8 @@ class App {
 		}
 	}
 
-	setupSquare() {
+	// todo ambient light
+	setupCollisionDetection() {
 		let steps = this.augmented_three_d_model_count
 		let radius = 4
 		let centerX = 0
