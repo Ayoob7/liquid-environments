@@ -1099,19 +1099,19 @@ class App {
 			urls.push("data/models/mitos/mito_"+x+"_out.obj");
 		}*/
 		// Mitochondrias
-		for(var x = 1; x <= 15; x++) {
+		for(var x = 15; x <= 15; x++) {
 			urls.push("data/models/mito_new/structure_id_"+x+".obj");
 		}
-		// Endolysosomes
-		var end = 'structure_id_405.obj,structure_id_334.obj,structure_id_336.obj,structure_id_333.obj,structure_id_535.obj,structure_id_395.obj,structure_id_502.obj,structure_id_375.obj,structure_id_390.obj,structure_id_660.obj,structure_id_703.obj,structure_id_623.obj,structure_id_359.obj,structure_id_608.obj,structure_id_618.obj,structure_id_595.obj,structure_id_552.obj'
-		for (var s of end.split(",")) {
-			urls.push("data/models/endolysosomes_new/"+s)
-		}
-		// Fusiform Vesicles
-		var fv = 'structure_id_816.obj,structure_id_815.obj,structure_id_818.obj,structure_id_822.obj,structure_id_820.obj,structure_id_821.obj'
-		for (var s of fv.split(",")) {
-			urls.push("data/models/fusiform_vesicles_new/"+s)
-		}
+		// // Endolysosomes
+		// var end = 'structure_id_405.obj,structure_id_334.obj,structure_id_336.obj,structure_id_333.obj,structure_id_535.obj,structure_id_395.obj,structure_id_502.obj,structure_id_375.obj,structure_id_390.obj,structure_id_660.obj,structure_id_703.obj,structure_id_623.obj,structure_id_359.obj,structure_id_608.obj,structure_id_618.obj,structure_id_595.obj,structure_id_552.obj'
+		// for (var s of end.split(",")) {
+		// 	urls.push("data/models/endolysosomes_new/"+s)
+		// }
+		// // Fusiform Vesicles
+		// var fv = 'structure_id_816.obj,structure_id_815.obj,structure_id_818.obj,structure_id_822.obj,structure_id_820.obj,structure_id_821.obj'
+		// for (var s of fv.split(",")) {
+		// 	urls.push("data/models/fusiform_vesicles_new/"+s)
+		// }
 
 		const makeRepeated = (arr, repeats) =>
 			[].concat(...Array.from({ length: repeats }, () => arr));
@@ -1198,31 +1198,65 @@ class App {
 		}
 	}
 
-	// todo ambient light
+	intersectCollision(a, b) {
+		let sphere_x = a[0]
+		let sphere_y = a[1]
+		let sphere_z = a[2]
+		let sphere_radius = a[3]
+
+		let other_sphere_x = b[0]
+		let other_sphere_y = b[1]
+		let other_sphere_z = b[2]
+		let other_sphere_radius = b[3]
+		var distance = Math.sqrt((sphere_x - other_sphere_x) * (sphere_x - other_sphere_x) +
+			(sphere_y - other_sphere_y) * (sphere_y - other_sphere_y) +
+			(sphere_z - other_sphere_z) * (sphere_z - other_sphere_z));
+
+		return distance < (sphere_radius + other_sphere_radius);
+	}
+
+
 	setupCollisionDetection() {
 		let steps = this.augmented_three_d_model_count
-		let radius = 4
+		let radius = 2
 		let centerX = 0
 		let centerY = 0
 
 		let x_val = 0
 		let y_val = 0
 		let z_val = 0
+		let location_map = []
 
 		// Structures
 		for(var x = 0; x < steps; x++) {
 
 			x_val = centerX + radius * Math.cos(2 * Math.PI * x / steps);
 			z_val = centerY + radius * Math.sin(2 * Math.PI * x / steps);
-			y_val = Math.floor(Math.random() * 4) + 1
+			y_val = 1 //Math.floor(Math.random() * 4) + 1
 			for (let obj of this.resources[x]) {
 				obj.scale.multiplyScalar(0.01);
-				obj.rotateX(Math.floor(Math.random() * 90) + 1 )
-				obj.rotateY(Math.floor(Math.random() * 90) + 1 )
-				obj.rotateZ(Math.floor(Math.random() * 90) + 1 )
+				// obj.rotateX(Math.floor(Math.random() * 90) + 1 )
+				// obj.rotateY(Math.floor(Math.random() * 90) + 1 )
+				// obj.rotateZ(Math.floor(Math.random() * 90) + 1 )
 				obj.position = new RC.Vector3(x_val, y_val, z_val);
 				obj.material.shininess = 16;
 				obj.material = this.createTextureForStructures();
+
+				let bp_x = obj.position.x + obj.geometry.boundingSphere.center.x * obj.scale.x
+				let bp_y = obj.position.y + obj.geometry.boundingSphere.center.y * obj.scale.y
+				let bp_z = obj.position.z + obj.geometry.boundingSphere.center.z * obj.scale.z
+				let bp_radius = obj.geometry.boundingSphere.radius * obj.scale.x
+
+				let pos = [bp_x,bp_y,bp_z,bp_radius]
+				let highest_offset_radius = 0
+
+				for (var location of location_map) {
+					if (this.intersectCollision(location,pos)) {
+						console.log("collide")
+					}
+				}
+				location_map.push(pos)
+
 				this.scene.add(obj);
 
 			}
