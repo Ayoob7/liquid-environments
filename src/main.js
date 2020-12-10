@@ -1099,24 +1099,24 @@ class App {
 			urls.push("data/models/mitos/mito_"+x+"_out.obj");
 		}*/
 		// Mitochondrias
-		for(var x = 15; x <= 15; x++) {
+		for(var x = 1; x <= 15; x++) {
 			urls.push("data/models/mito_new/structure_id_"+x+".obj");
 		}
-		// // Endolysosomes
-		// var end = 'structure_id_405.obj,structure_id_334.obj,structure_id_336.obj,structure_id_333.obj,structure_id_535.obj,structure_id_395.obj,structure_id_502.obj,structure_id_375.obj,structure_id_390.obj,structure_id_660.obj,structure_id_703.obj,structure_id_623.obj,structure_id_359.obj,structure_id_608.obj,structure_id_618.obj,structure_id_595.obj,structure_id_552.obj'
-		// for (var s of end.split(",")) {
-		// 	urls.push("data/models/endolysosomes_new/"+s)
-		// }
-		// // Fusiform Vesicles
-		// var fv = 'structure_id_816.obj,structure_id_815.obj,structure_id_818.obj,structure_id_822.obj,structure_id_820.obj,structure_id_821.obj'
-		// for (var s of fv.split(",")) {
-		// 	urls.push("data/models/fusiform_vesicles_new/"+s)
-		// }
+		// Endolysosomes
+		var end = 'structure_id_405.obj,structure_id_334.obj,structure_id_336.obj,structure_id_333.obj,structure_id_535.obj,structure_id_395.obj,structure_id_502.obj,structure_id_375.obj,structure_id_390.obj,structure_id_660.obj,structure_id_703.obj,structure_id_623.obj,structure_id_359.obj,structure_id_608.obj,structure_id_618.obj,structure_id_595.obj,structure_id_552.obj'
+		for (var s of end.split(",")) {
+			urls.push("data/models/endolysosomes_new/"+s)
+		}
+		// Fusiform Vesicles
+		var fv = 'structure_id_816.obj,structure_id_815.obj,structure_id_818.obj,structure_id_822.obj,structure_id_820.obj,structure_id_821.obj'
+		for (var s of fv.split(",")) {
+			urls.push("data/models/fusiform_vesicles_new/"+s)
+		}
 
 		const makeRepeated = (arr, repeats) =>
 			[].concat(...Array.from({ length: repeats }, () => arr));
 
-		let augmented_dataset = makeRepeated(urls, 3)
+		let augmented_dataset = makeRepeated(urls, 5)
 
 		function shuffleArray(array) {
 			for (var i = array.length - 1; i > 0; i--) {
@@ -1212,13 +1212,13 @@ class App {
 			(sphere_y - other_sphere_y) * (sphere_y - other_sphere_y) +
 			(sphere_z - other_sphere_z) * (sphere_z - other_sphere_z));
 
-		return distance < (sphere_radius + other_sphere_radius);
+		return distance - (sphere_radius + other_sphere_radius);
 	}
 
 
 	setupCollisionDetection() {
 		let steps = this.augmented_three_d_model_count
-		let radius = 2
+		let radius = 4
 		let centerX = 0
 		let centerY = 0
 
@@ -1232,12 +1232,12 @@ class App {
 
 			x_val = centerX + radius * Math.cos(2 * Math.PI * x / steps);
 			z_val = centerY + radius * Math.sin(2 * Math.PI * x / steps);
-			y_val = 1 //Math.floor(Math.random() * 4) + 1
+			y_val = Math.floor(Math.random() * 4) + 1
 			for (let obj of this.resources[x]) {
 				obj.scale.multiplyScalar(0.01);
-				// obj.rotateX(Math.floor(Math.random() * 90) + 1 )
-				// obj.rotateY(Math.floor(Math.random() * 90) + 1 )
-				// obj.rotateZ(Math.floor(Math.random() * 90) + 1 )
+				obj.rotateX(Math.floor(Math.random() * 90) + 1 )
+				obj.rotateY(Math.floor(Math.random() * 90) + 1 )
+				obj.rotateZ(Math.floor(Math.random() * 90) + 1 )
 				obj.position = new RC.Vector3(x_val, y_val, z_val);
 				obj.material.shininess = 16;
 				obj.material = this.createTextureForStructures();
@@ -1251,11 +1251,19 @@ class App {
 				let highest_offset_radius = 0
 
 				for (var location of location_map) {
-					if (this.intersectCollision(location,pos)) {
-						console.log("collide")
+					if (this.intersectCollision(location,pos) < 0) {
+						if ((this.intersectCollision(location,pos)) < highest_offset_radius) {
+							highest_offset_radius = this.intersectCollision(location,pos)
+						}
 					}
 				}
-				location_map.push(pos)
+				highest_offset_radius = Math.abs(highest_offset_radius)
+
+				obj.positionX += highest_offset_radius
+				obj.positionY += highest_offset_radius
+				obj.positionZ += highest_offset_radius
+				let new_pos = [bp_x+highest_offset_radius,bp_y+highest_offset_radius,bp_z+highest_offset_radius,bp_radius]
+				location_map.push(new_pos)
 
 				this.scene.add(obj);
 
