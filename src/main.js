@@ -1153,7 +1153,7 @@ class App {
 
 		let wait = (function() {
 			if (this.resources.every((el) => { return el !== false; })) {
-				this.setupCollisionDetection();
+				this.setupObjectsInHemiSphere();
 				callback();
 			} else {
 				setTimeout(wait, 500);
@@ -1218,7 +1218,7 @@ class App {
 	}
 
 
-	setupCollisionDetection() {
+	setupObjectsInCircles() {
 
 		//The general equation of a sphere is: (x - a)² + (y - b)² + (z - c)² = r², where (a, b, c) represents the center of the sphere,
 		// r represents the radius, and x, y, and z are the coordinates of the points on the surface of the sphere.
@@ -1278,6 +1278,119 @@ class App {
 			}
 		}
 	}
+
+	setupObjectsInHemiSphere() {
+
+		let num_points = this.augmented_three_d_model_count
+		let indices = [...Array(num_points).keys()]
+		let phi = 0
+		let theta = 0
+		let x_val = 0
+		let y_val = 0
+		let z_val = 0
+		let radius = 3
+		let radius_scalar = 1.2
+		let location_map = []
+
+		for(var x = 0; x < num_points; x++) {
+			// Sphere coordinates
+			indices[x] = indices[x] + 0.5
+			phi = Math.acos(1 - 2*indices[x]/num_points)
+			theta = Math.PI * (1 + 5**0.5) * indices[x]
+
+			// Select the upper hemisphere
+			if (Math.sin(theta) * Math.sin(phi) > 0) {
+				x_val = Math.cos(theta) * Math.sin(phi)*radius
+				y_val = Math.sin(theta) * Math.sin(phi)*radius
+				z_val = Math.cos(phi)*radius
+				for (let obj of this.resources[x]) {
+					obj.scale.multiplyScalar(0.01);
+
+					// Stochastic Rotation
+					obj.rotateX(Math.floor(Math.random() * 90) + 1 )
+					obj.rotateY(Math.floor(Math.random() * 90) + 1 )
+					obj.rotateZ(Math.floor(Math.random() * 90) + 1 )
+
+					// Initial Position
+					obj.position = new RC.Vector3(x_val, y_val, z_val);
+					obj.material.shininess = 16;
+					obj.material = this.createTextureForStructures();
+
+					// Collision Detection
+					let bp_x = obj.position.x + obj.geometry.boundingSphere.center.x * obj.scale.x
+					let bp_y = obj.position.y + obj.geometry.boundingSphere.center.y * obj.scale.y
+					let bp_z = obj.position.z + obj.geometry.boundingSphere.center.z * obj.scale.z
+					let bp_radius = obj.geometry.boundingSphere.radius * obj.scale.x
+					let pos = [bp_x,bp_y,bp_z,bp_radius]
+					let highest_offset_radius = 0
+
+					for (var location of location_map) {
+						if (this.intersectCollision(location,pos) < 0) {
+							if ((this.intersectCollision(location,pos)) < highest_offset_radius) {
+								highest_offset_radius = this.intersectCollision(location,pos)
+							}
+						}
+					}
+
+					// Collision Mitigation
+					highest_offset_radius = Math.abs(highest_offset_radius)
+					obj.positionX -= highest_offset_radius
+					obj.positionY -= highest_offset_radius
+					obj.positionZ -= highest_offset_radius
+					let new_pos = [bp_x-highest_offset_radius,bp_y-highest_offset_radius,bp_z-highest_offset_radius,bp_radius]
+					location_map.push(new_pos)
+
+					this.scene.add(obj);
+				}
+			}
+			// Select lower Hemisphere
+			else {
+				x_val = Math.cos(theta) * Math.sin(phi) * radius * -1 * radius_scalar
+				y_val = Math.sin(theta) * Math.sin(phi) * radius * -1 * radius_scalar
+				z_val = Math.cos(phi) * radius * -1 * radius_scalar
+				for (let obj of this.resources[x]) {
+					obj.scale.multiplyScalar(0.01);
+
+					// Stochastic Rotation
+					obj.rotateX(Math.floor(Math.random() * 90) + 1 )
+					obj.rotateY(Math.floor(Math.random() * 90) + 1 )
+					obj.rotateZ(Math.floor(Math.random() * 90) + 1 )
+
+					// Initial Position
+					obj.position = new RC.Vector3(x_val, y_val, z_val);
+					obj.material.shininess = 16;
+					obj.material = this.createTextureForStructures();
+
+					// Collision Detection
+					let bp_x = obj.position.x + obj.geometry.boundingSphere.center.x * obj.scale.x
+					let bp_y = obj.position.y + obj.geometry.boundingSphere.center.y * obj.scale.y
+					let bp_z = obj.position.z + obj.geometry.boundingSphere.center.z * obj.scale.z
+					let bp_radius = obj.geometry.boundingSphere.radius * obj.scale.x
+					let pos = [bp_x,bp_y,bp_z,bp_radius]
+					let highest_offset_radius = 0
+
+					for (var location of location_map) {
+						if (this.intersectCollision(location,pos) < 0) {
+							if ((this.intersectCollision(location,pos)) < highest_offset_radius) {
+								highest_offset_radius = this.intersectCollision(location,pos)
+							}
+						}
+					}
+
+					// Collision Mitigation
+					highest_offset_radius = Math.abs(highest_offset_radius)
+					obj.positionX -= highest_offset_radius
+					obj.positionY -= highest_offset_radius
+					obj.positionZ -= highest_offset_radius
+					let new_pos = [bp_x-highest_offset_radius,bp_y-highest_offset_radius,bp_z-highest_offset_radius,bp_radius]
+					location_map.push(new_pos)
+
+					this.scene.add(obj);
+				}
+			}
+		}
+	}
+
 
 	/* ================== Most of my work here ================== */
 
