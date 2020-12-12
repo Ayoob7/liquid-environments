@@ -1584,6 +1584,9 @@ class App {
 		this.lights.frustum[0].camera.position.x = -6 + 3 * Math.sin(this.timer.curr * 0.5);
 		this.lights.frustum[0].camera.lookAt(new RC.Vector3(0, 0, 0), new RC.Vector3(0, 1, 0));
 
+		//Floating animation
+		// this.sceneObjects[3].positionY = -2.5 * Math.atan((-0.4 * Math.sin(0.3 * this.timer.curr))/(1+ 0.4 * Math.cos(0.2 * this.timer.curr))) + Math.PI
+
 		// Render
 		this.render();
 		window.requestAnimationFrame(() => { this.update(); });
