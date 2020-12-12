@@ -1284,10 +1284,16 @@ class App {
 		let y_val = 0
 		let z_val = 0
 		let radius = 3
-		let radius_scalar = 1.2
+		let radius_scalar = 2
+		let radius_outset_scalar = 1.25
+		let redius_inset_scalar = 0.5
+		let redius_inv_inset_scalar = 0.3
 		let location_map = []
 
 		for(var x = 0; x < num_points; x++) {
+			// Intersect Flag
+			let isIntersectFlag = false
+
 			// Sphere coordinates
 			indices[x] = indices[x] + 0.5
 			phi = Math.acos(1 - 2*indices[x]/num_points)
@@ -1322,6 +1328,7 @@ class App {
 					for (var location of location_map) {
 						if (this.intersectCollision(location,pos) < 0) {
 							if ((this.intersectCollision(location,pos)) < highest_offset_radius) {
+								isIntersectFlag = true
 								highest_offset_radius = this.intersectCollision(location,pos)
 							}
 						}
@@ -1334,6 +1341,35 @@ class App {
 					obj.positionZ -= highest_offset_radius
 					let new_pos = [bp_x-highest_offset_radius,bp_y-highest_offset_radius,bp_z-highest_offset_radius,bp_radius]
 					location_map.push(new_pos)
+
+					// Outset
+					if (!isIntersectFlag) {
+						let outset_clone = new RC.Mesh(obj.geometry, this.createTextureForStructures());
+						outset_clone.material.shininess = 16;
+						outset_clone.scale.multiplyScalar(0.01);
+						outset_clone.position = new RC.Vector3(x_val * radius_outset_scalar, y_val * radius_outset_scalar, z_val * radius_outset_scalar);
+						// Stochastic Rotation
+						outset_clone.rotateX(Math.floor(Math.random() * 90) + 1 )
+						outset_clone.rotateY(Math.floor(Math.random() * 90) + 1 )
+						outset_clone.rotateZ(Math.floor(Math.random() * 90) + 1 )
+
+						location_map.push([x_val * radius_outset_scalar, y_val * radius_outset_scalar, z_val * radius_outset_scalar])
+						this.scene.add(outset_clone)
+					}
+					// Inset
+					if (!isIntersectFlag) {
+						let outset_clone = new RC.Mesh(obj.geometry, this.createTextureForStructures());
+						outset_clone.material.shininess = 1;
+						outset_clone.scale.multiplyScalar(0.005);
+						outset_clone.position = new RC.Vector3(x_val * redius_inset_scalar, y_val * redius_inset_scalar, z_val * redius_inset_scalar);
+						// Stochastic Rotation
+						outset_clone.rotateX(Math.floor(Math.random() * 90) + 1 )
+						outset_clone.rotateY(Math.floor(Math.random() * 90) + 1 )
+						outset_clone.rotateZ(Math.floor(Math.random() * 90) + 1 )
+
+						location_map.push([x_val * redius_inset_scalar, y_val * redius_inset_scalar, z_val * redius_inset_scalar])
+						this.scene.add(outset_clone)
+					}
 
 					this.scene.add(obj);
 				}
@@ -1367,6 +1403,7 @@ class App {
 					for (var location of location_map) {
 						if (this.intersectCollision(location,pos) < 0) {
 							if ((this.intersectCollision(location,pos)) < highest_offset_radius) {
+								isIntersectFlag = true
 								highest_offset_radius = this.intersectCollision(location,pos)
 							}
 						}
@@ -1379,6 +1416,36 @@ class App {
 					obj.positionZ -= highest_offset_radius
 					let new_pos = [bp_x-highest_offset_radius,bp_y-highest_offset_radius,bp_z-highest_offset_radius,bp_radius]
 					location_map.push(new_pos)
+
+					// Outset
+					if (!isIntersectFlag) {
+						let outset_clone = new RC.Mesh(obj.geometry, this.createTextureForStructures());
+						outset_clone.material.shininess = 1;
+						outset_clone.scale.multiplyScalar(0.01);
+						outset_clone.position = new RC.Vector3(x_val * radius_outset_scalar, y_val * radius_outset_scalar, z_val * radius_outset_scalar);
+						// Stochastic Rotation
+						outset_clone.rotateX(Math.floor(Math.random() * 90) + 1 )
+						outset_clone.rotateY(Math.floor(Math.random() * 90) + 1 )
+						outset_clone.rotateZ(Math.floor(Math.random() * 90) + 1 )
+
+						location_map.push([x_val * radius_outset_scalar, y_val * radius_outset_scalar, z_val * radius_outset_scalar])
+						this.scene.add(outset_clone)
+					}
+
+					// Inset
+					if (!isIntersectFlag) {
+						let outset_clone = new RC.Mesh(obj.geometry, this.createTextureForStructures());
+						outset_clone.material.shininess = 1;
+						outset_clone.scale.multiplyScalar(0.005);
+						outset_clone.position = new RC.Vector3(x_val * redius_inv_inset_scalar, y_val * redius_inv_inset_scalar, z_val * redius_inv_inset_scalar);
+						// Stochastic Rotation
+						outset_clone.rotateX(Math.floor(Math.random() * 90) + 1 )
+						outset_clone.rotateY(Math.floor(Math.random() * 90) + 1 )
+						outset_clone.rotateZ(Math.floor(Math.random() * 90) + 1 )
+
+						location_map.push([x_val * redius_inv_inset_scalar, y_val * redius_inv_inset_scalar, z_val * redius_inv_inset_scalar])
+						this.scene.add(outset_clone)
+					}
 
 					this.scene.add(obj);
 				}
