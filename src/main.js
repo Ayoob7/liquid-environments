@@ -1220,11 +1220,6 @@ class App {
 
 	setupObjectsInCircles() {
 
-		//The general equation of a sphere is: (x - a)² + (y - b)² + (z - c)² = r², where (a, b, c) represents the center of the sphere,
-		// r represents the radius, and x, y, and z are the coordinates of the points on the surface of the sphere.
-		// https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere?rq=1
-		// https://discourse.threejs.org/t/can-i-place-obects-on-a-sphere-surface-evenly/4773
-
 		let steps = this.augmented_three_d_model_count
 		let radius = 4
 		let centerX = 0
