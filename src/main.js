@@ -43,6 +43,8 @@ class App {
 		this.resize();
 		window.addEventListener("resize", () => { this.resize(); }, false);
 
+		this.list_floating_motion = [0,0.1,0.2,0.3,0.4,0.5,0.6];
+
 		// Load resources and start
 		this.loadResources(() => { this.start(); });
 		//window.requestAnimationFrame(() => { this.update(); });
@@ -1586,7 +1588,12 @@ class App {
 		this.lights.frustum[0].camera.lookAt(new RC.Vector3(0, 0, 0), new RC.Vector3(0, 1, 0));
 
 		//Floating animation
-		// this.sceneObjects[3].positionY = -2.5 * Math.atan((-0.4 * Math.sin(0.3 * this.timer.curr))/(1+ 0.4 * Math.cos(0.2 * this.timer.curr))) + Math.PI
+		for (let i = 2; i < this.sceneObjects.length; i++) {
+			var floating_coefficient = this.list_floating_motion[i%this.list_floating_motion.length]
+			this.sceneObjects[i].positionY += 0.0005*(-2.5 * Math.atan((-0.4 * Math.sin(0.3 * this.timer.curr + floating_coefficient))/(1+ 0.4 * Math.cos(0.2 * this.timer.curr + floating_coefficient))));
+			this.sceneObjects[i].positionX += 0.0005*(-2.5 * Math.atan((-0.4 * Math.sin(0.3 * this.timer.curr + floating_coefficient))/(1+ 0.4 * Math.cos(0.2 * this.timer.curr + floating_coefficient))));
+			this.sceneObjects[i].positionZ += 0.0005*(-2.5 * Math.atan((-0.4 * Math.sin(0.3 * this.timer.curr + floating_coefficient))/(1+ 0.4 * Math.cos(0.2 * this.timer.curr + floating_coefficient))));
+		}
 
 		// Render
 		this.render();
