@@ -437,16 +437,17 @@ class App {
 	}
 
 	createTextureForStructures(color, specular, shininess) {
-		if (color === undefined) color = new RC.Color(255, 255, 255);
+		if (color === undefined) color = new RC.Color(0.5, 0.5, .1);
 		if (specular === undefined) specular = new RC.Color(1, 1, 1);
 		if (shininess === undefined) shininess = 1.0;
 
-		let mat = new RC.MeshPhongMaterial();
+		// let mat = new RC.MeshPhongMaterial();
+		let mat = new RC.MeshBasicMaterial();
 		mat.color = color;
-		mat.specular = specular;
-		mat.shininess = shininess;
-		// mat.transparent = true;
-		// mat.opacity = 0.1;
+		// mat.specular = specular;
+		// mat.shininess = shininess;
+		mat.transparent = true;
+		mat.opacity = 0.5;
 		return mat;
 	}
 
