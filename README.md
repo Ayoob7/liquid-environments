@@ -1,6 +1,6 @@
 # Real-time Rendering of Liquid Environments
 
-This project was developed for my Bachelor's thesis. A live demo of the application is available [here](https://rokcej.github.io/).
+This project was developed during my time as a visiting student researcher at King Abdullah University of Science and Technology. A live demo of the application is available [here](https://ayoob7.github.io/liquid-environments/).
 
 ## Abstract 
 
@@ -14,12 +14,10 @@ A performance evaluation is also done, comparing the computational cost of each 
 
 ## Examples
 
-The following images were generated using this model.
+The following is a report based on what was developed.
 
-![Clear water example](examples/bunny_water.jpg "Bunnies in clear water")
+![Clear water example](examples/Final_report_2020_KAUST-1.png "page-1")
 
-![Dirty water example](examples/bunny_swamp.jpg "Bunnies in dirty water")
+![Dirty water example](examples/Final_report_2020_KAUST-2.png "page-2")
 
-![Snow example](examples/bunny_snow.jpg "Bunnies in snow")
-
-![Smoke example](examples/dragon.jpg "Dragon in smoke")
+![Snow example](examples/Final_report_2020_KAUST-3.png "page-3")
